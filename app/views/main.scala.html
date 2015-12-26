@@ -1,0 +1,40 @@
+@(	title: String,
+	scripts: Html = Html(""),
+	pagetyp: String,
+	stylesheets: Html = Html("")
+)(content: Html)
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>@title</title>
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+        <link rel="stylesheet" href="@routes.Assets.at("bower_components/bootstrap/dist/css/bootstrap.min.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("bower_components/fancybox/source/jquery.fancybox.css")">
+        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/main.css")">
+        @stylesheets
+        
+        <meta charset="utf-8"> 
+        <meta name="Robots" content="index,follow">
+        <meta name="keywords" content="Localizr" lang="en">
+        <meta name="description" content="localizr helps you to find beautiful spots and interesting events all over the world!">
+        <meta name="generator" content="Localizr">
+        <meta name="author" content="MAM">
+        <link rel="canonical" href="/">
+        <link href="https://fonts.googleapis.com/css?family=Lobster" rel="stylesheet" type="text/css">
+    </head>
+    <body id="@pagetyp">
+
+        <a href="https://github.com/Localizr/Localizr"><img style="position: absolute; top: 0; left: 0; border: 0;" src="https://camo.githubusercontent.com/8b6b8ccc6da3aa5722903da7b58eb5ab1081adee/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f6c6566745f6f72616e67655f6666373630302e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_left_orange_ff7600.png"></a>
+
+		<div class="container-fluid">
+			@content
+		</div>
+
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="@routes.Assets.at("bower_components/jquery/dist/jquery.min.js")"></script>
+        <script src="@routes.Assets.at("bower_components/fancybox/source/jquery.fancybox.pack.js")"></script>
+        <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+        @scripts
+    </body>
+</html>

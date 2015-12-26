@@ -1,0 +1,22 @@
+{
+	"name":		"Localizr",
+	"version":	"1.0",
+	
+	"dependencies": {
+		"bootstrap": 			"latest",
+		"font-awesome": 		"latest",
+		"jquery": 			"latest",
+		
+		"leaflet":			"latest",
+		"leaflet.markercluster":	"latest",
+		"geocoder-js":			"https://github.com/geocoder-php/geocoder-js.git",
+		"underscore":			"latest",
+		"async":			"latest",
+		
+		"fancybox":			"latest",
+		"Justified-Gallery": 		"latest",
+		"jquery-color":			"latest"
+	},
+
+	"private": true
+}

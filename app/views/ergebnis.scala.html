@@ -1,0 +1,158 @@
+@(
+	loc: models.geo.Location,
+	poiList: models.geonames.struct.POIList,
+	eventList: models.eventmedia.EventList,
+	infoDBPedia: models.dbpedia.DBPediaInfoObject,
+	panoramioPhotos: models.images.struct.LocPhotoList,
+    error: Boolean
+)
+
+@import com.google.gson.Gson
+
+@css = {
+    <link rel="stylesheet" href="@routes.Assets.at("bower_components/font-awesome/css/font-awesome.min.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("bower_components/leaflet/dist/leaflet.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("bower_components/leaflet.markercluster/dist/MarkerCluster.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("stylesheets/MarkerCluster.Custom.css")">
+    <link rel="stylesheet" href="@routes.Assets.at("bower_components/Justified-Gallery/dist/css/justifiedGallery.min.css")">
+}
+
+@scripts = {
+    <script>
+        var mapViewLat = @loc.getLat();
+        var mapViewLng = @loc.getLng();
+        var cityName = "@loc.getSimpleName()";
+    	var list = @{Html(new Gson().toJson(poiList.get))};
+    	var panoramioImages = @{Html(new Gson().toJson(panoramioPhotos.getPhotos))};
+    	var events = @{Html(new Gson().toJson(eventList.get))};
+        </script>
+    <script src="@routes.Assets.at("bower_components/bootstrap/js/tab.js")"></script>
+    <script src="@routes.Assets.at("bower_components/Justified-Gallery/dist/js/jquery.justifiedGallery.min.js")"></script>
+    <script src="@routes.Assets.at("bower_components/bootstrap/dist/js/bootstrap.min.js")"></script>
+    <script src="@routes.Assets.at("bower_components/leaflet/dist/leaflet.js")"></script>
+    <script src="@routes.Assets.at("bower_components/leaflet.markercluster/dist/leaflet.markercluster.js")"></script>
+    <script src="@routes.Assets.at("bower_components/geocoder-js/dist/geocoder.js")"></script>
+    <script src="@routes.Assets.at("bower_components/underscore/underscore.js")"></script>
+    <script src="@routes.Assets.at("bower_components/async/lib/async.js")"></script>
+    <script src="@routes.Assets.at("bower_components/jquery-color/jquery.color.js")"></script>
+    <script src="@routes.Assets.at("javascripts/ergebnis.js")"></script>
+}
+
+
+@main("Localizr. Results.", scripts, "result", css) {
+    <div id="outer-map"><div id="map"></div></div>
+    
+    <div id="outer-container">
+    	<div id="outer-container-wrapper">
+            @if(error) {
+                <div class="alert alert-danger" role="alert">Some information could not be retrieved</div>
+            }
+			<h1>@loc.getName()</h1>
+			<a href="@routes.Application.index()"><img src="@routes.Assets.at("images/start_over_icon.png")" style="width: 50px;"> Start over</a>
+		   	<ul id="myTab" class="nav nav-tabs" role="tablist">
+		   		<li class="active"><a data-map="65%" data-container="35%" href="#general-info">General Info</a></li>
+		   		<li><a data-map="65%" data-container="35%" href="#poi">Points of Interest</a></li>
+		   		<li><a data-map="30%" data-container="70%" href="#events">Events</a></li>
+		   		<li><a data-map="30%" data-container="70%" href="#photos">Photos</a></li>
+		   	</ul>
+		    <div class="tab-content">
+			    <div class="tab-pane active" id="general-info">
+			    
+			        @if(infoDBPedia!=null) {
+					<img src="@infoDBPedia.getLiteralProperties.get("picture")?width=600" alt="" style="background-color: white; width: 100%;">
+					<table class="table table-condensed table-general-info">
+						@for(key <- infoDBPedia.getLiteralProperties.keySet()){
+							@if(key=="Country" || key=="Leader"){
+							<tr>
+								<th>@key</th>
+    							@for(label <- infoDBPedia.getLiteralProperties.get(key).split(",")) {
+        							@if(infoDBPedia.getWikiLinks.containsKey(label)){
+        							<td><a class="fancybox-website" href=@infoDBPedia.getWikiLinks.get(label)>@label</a></td>       								
+        							}
+    							}						
+							</tr>
+							}							
+							@if(key!="picture" && key!="Country" && key!="Leader" && key!="Website"){						
+								<tr>
+								<th>@key</th>
+								<td>@infoDBPedia.getLiteralProperties.get(key)</td>
+								</tr>					
+							}
+							@if(key=="Website"){						
+								<tr>
+								<th>@key</th>
+								@for(page <- infoDBPedia.getLiteralProperties.get(key).split(",")) {
+									<td><a class="fancybox-website" href=@page>@page</a></td>
+								}
+								</tr>					
+							}								
+						}
+					
+					</table>
+			        }
+		        </div>
+			        
+			    <div class="tab-pane" id="poi">
+			        <ul>
+			        @if(poiList!=null) {
+			        	@for((p, index) <- poiList.get.zipWithIndex) {	
+	                    	<li>
+	                    		<a class="fancybox-website link-poi link-wikipedia" title="Read more about @p.getLabel() on Wikipedia"  href="@p.getWikilink()">Wikipedia</a>
+	                    		<a class="scrollPOIToMap link-poi link-map" data-uri="@p.getResource()" title="Show @p.getLabel() on the map" href="#" data-type="poi" data-lat="@p.getLat()" data-lon="@p.getLon()" data-index="@index">@p.getLabel()</a>
+	                    		
+                    		</li>
+			       		}
+			        }
+			        </ul>
+			     </div>
+			     
+			     <div class="tab-pane" id="events">
+			        
+			        <table class="table table-condensed">
+					  <tr>
+					    <th>Event</th>
+					    <th>Category</th> 
+					    <th>Where?</th>
+					    <th>Artist</th>
+					    <th>When?</th>
+					    <th></th>
+					  </tr>	
+					@if(eventList!=null) {
+						@for((e, index) <- eventList.get.zipWithIndex) {
+			        	<tr>
+			            <td>@e.getShortTitle()</td>
+					    <td>@e.getCategory()</td> 
+				    	<td><a href="#" title="Show event on map" class="scrollEventToMap" data-index="@index"><span class="icon"></span><span class="address">@e.getAddress()</span></a></td>
+					    <td>@e.getShortArtist()</td>
+					    <td>@Html(e.getFormattedDate())</td>
+					    <td>
+	    					@if(e.getFirstImage()) {
+		    					<img alt="@e.getShortTitle()" src="@e.getFirstImage()">
+	    					}
+				    	</td>
+					    </tr>
+			        }	
+					} 
+			        
+					</table>        
+			     </div>
+			     
+			     <div class="tab-pane" id="photos">
+			
+			        <div id="image-container">
+			        @for((p, index) <- panoramioPhotos.getPhotos().zipWithIndex) {
+			            <div>
+			            	<img class="image" alt="@p.getTitle() | Author: @p.getOwner_name" src="@p.getURL()">
+			            	<div class="action-container">
+			            		<a class="image-link link-map scrollPictureToMap" data-type="image" data-lat="@p.getLat()" data-lon="@p.getLng()" data-index="@index" href="#"><span>Show in map</span></a>
+			            		<a class="image-link link-lightbox fancybox" data-fancybox-group="panoramio" href="@p.getURLOriginalImage()" ><span>Show large image</span></a>
+			            	</div>
+		            	</div>
+			        }
+			        </div>
+			
+				</div>
+		    </div>
+	    </div>
+    </div>
+}

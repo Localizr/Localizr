@@ -1,0 +1,91 @@
+@scripts = {<script src="@routes.Assets.at("javascripts/index.js")"></script>}
+@main("Localizr. Let me help you!", scripts, "index") {
+
+	<div id="inner">
+
+		<h1 id="start">Localizr.</h1>
+		
+		<div class="search-container">
+			<h3>Let me help you.<br>What category describes you best?</h3>
+			@helper.form(action = routes.Application.index()) {
+			
+				<div class="select-typ">
+					<input type="radio" name="profile" value="tourist" id="tourist" checked><label for="tourist">Tourist</label><br>
+					<input type="radio" name="profile" value="family" id="family"><label for="family">Family with Kids</label><br>
+					<input type="radio" name="profile" value="newcitizen" id="newcitizen"><label for="newcitizen">New Citizen</label><br>
+					<input type="radio" name="profile" value="business" id="business"><label for="business">On Business Trip</label><br>
+					<input type="radio" name="profile" value="sport" id="sport"><label for="sport">Sport Fanatic</label><br>
+                    <input type="radio" name="profile" value="advanced" id="advanced"><button type="button" class="btn btn-default btn-xs" id="advancedSearch" href="#inline">Advanced Search</button><br>
+				</div>
+
+                <div id="inline" style="display:none;width: 500px; height: 150px;">
+                    <div class="row" style="width: 500px;">
+
+                        <div class="col-md-6">
+                            <label><input type="checkbox" id="Airports" name="categories" value="fb:aviation.airport">Airports</label><br/>
+                            <label><input type="checkbox" id="Architecture" name="categories" value="fb:architecture.structure,fb:architecture.house,fb:architecture.building">Architecture</label><br/>
+                            <label><input type="checkbox" id="Cemeteries" name="categories" value="fb:location.cemetery">Cemeteries</label><br/>
+                            <label><input type="checkbox" id="Courts" name="categories" value="fb:law.court">Courts</label><br/>
+                            <label><input type="checkbox" id="Education Departments" name="categories" value="fb:education.department">Education Departments</label><br/>
+                            <label><input type="checkbox" id="Hospitals" name="categories" value="fb:medicine.hospital">Hospitals</label><br/>
+                            <label><input type="checkbox" id="Hotels" name="categories" value="fb:travel.hotel,fb:base.hotels.topic">Hotels</label><br/>
+                            <label><input type="checkbox" id="fb:library.public_library" name="categories" value="fb:aviation.airport">Libraries</label><br/>
+                            <label><input type="checkbox" id="Lighthouses" name="categories" value="fb:architecture.lighthouse">Lighthouses</label><br/>
+                            <label><input type="checkbox" id="Monasteries" name="categories" value="fb:religion.monastery">Monasteries</label><br/>
+                            <label><input type="checkbox" id="Mountains" name="categories" value="fb:geography.mountain">Mountains</label><br/>
+                            <label><input type="checkbox" id="Movie Theatres" name="categories" value="fb:base.movietheatres.movie_theatre">Movie Theatres</label><br/>
+                            <label><input type="checkbox" id="Museums" name="categories" value="fb:architecture.museum">Museums</label><br/>
+                            <label><input type="checkbox" id="Nightclubs" name="categories" value="fb:base.nightclubs.nightclub">Nightclubs</label>
+
+                        </div>
+                        <div class="col-md-6">
+                            <label><input type="checkbox" id="Observatories" name="categories" value="fb:astronomy.astronomical_observatory">Observatories</label><br/>
+                            <label><input type="checkbox" id="Operas" name="categories" value="fb:opera.opera_house">Operas</label><br/>
+                            <label><input type="checkbox" id="Organizations" name="categories" value="fb:organization.organization">Organizations</label><br/>
+                            <label><input type="checkbox" id="Protected Sites" name="categories" value="fb:protected_sites.protected_site">Protected Sites</label><br/>
+                            <label><input type="checkbox" id="Religious Places" name="categories" value="fb:religion.place_of_worship">Religious Places</label><br/>
+                            <label><input type="checkbox" id="Schools" name="categories" value="fb:education.school">Schools</label><br/>
+                            <label><input type="checkbox" id="Shopping Centers" name="categories" value="fb:business.shopping_center">Shopping Centers</label><br/>
+                            <label><input type="checkbox" id="Sports Facilities" name="categories" value="fb:sports.sports_facility">Sports Facilities</label><br/>
+                            <label><input type="checkbox" id="Stock Exchanges" name="categories" value="fb:finance.stock_exchange">Stock Exchanges</label><br/>
+                            <label><input type="checkbox" id="Theatres" name="categories" value="fb:theater.theater">Theatres</label><br/>
+                            <label><input type="checkbox" id="Tourist Attractions" name="categories" value="fb:travel.tourist_attraction">Tourist Attractions</label><br/>
+                            <label><input type="checkbox" id="TV Locations" name="categories" value="fb:tv.tv_location">TV Locations</label><br/>
+                            <label><input type="checkbox" id="Universities" name="categories" value="fb:education.university">Universities</label><br/>
+                            <label><input type="checkbox" id="Zoos" name="categories" value="fb:zoos.zoo">Zoos</label><br/>
+                        </div>
+                    </div>
+                </div>
+
+				<h3>Ok, great. And where are you?</h3>
+				<div id="search-by-query">
+					<div>
+						<input type="text" name="qry">
+						<button class="btn btn-success" id="gobutton" type="submit" name="type" value="query" placeolder="My Place">Search</button>
+					</div>
+				</div>
+				<div id="search-by-gps">
+					<h4>Or...</h4>
+					<div><input id="lat" type="hidden" name="lat"></div>
+					<div><input id="lon" type="hidden" name="lon"></div>
+					<div><button class="btn btn-success" type="submit" id="gpsbutton" name="type" value="gps">Locate me</button></div>
+				</div>
+				
+			}	
+		</div>
+	</div>
+
+    <div style="text-align: center; color: #ffffff; margin-top: 10px">
+        <a id="iconSourceLink" href="#iconSources">Icon Sources</a> <br>
+    </div>
+
+    <div id="iconSources" style="display:none;width: 500px; height: 150px;">
+        <a href="http://www.flaticon.com/free-icon/update-arrow_2046" target="_blank">Update Arrow Icon</a> made by <a href="http://www.freepik.com/" target="_blank">Freepik</a> from <a href="http://www.flaticon.com" target="_blank">www.flaticon.com</a><br>
+        <a href="http://www.flaticon.com/free-icon/election-event-on-a-calendar-with-star-symbol_48732" target="_blank">Election Event on Calendar with Star Icon</a> made by <a href="http://www.freepik.com/" target="_blank">Freepik</a> from <a href="http://www.flaticon.com" target="_blank">www.flaticon.com</a><br>
+        <a href="http://www.flaticon.com/free-icon/wikipedia-logotype-of-earth-puzzle_48930" target="_blank">Wikipedia Logo Earth Puzzle Icon</a> made by <a href="http://www.freepik.com/" target="_blank">Freepik</a> from <a href="http://www.flaticon.com" target="_blank">www.flaticon.com</a><br>
+        <a href="http://www.flaticon.com/free-icon/wikipedia-logo_49360" target="_blank">Wikipedia Logo Icon</a> made by <a href="http://www.freepik.com/" target="_blank">Freepik</a> from <a href="http://www.flaticon.com" target="_blank">www.flaticon.com</a><br>
+        <a href="http://www.flaticon.com/free-icon/interest-point_2985" target="_blank">Interest Point Icon</a> made by <a href="http://www.flaticon.com/authors/stephen-hutchings" target="_blank">Stephen Hutchings</a> from <a href="http://www.flaticon.com" target="_blank">www.flaticon.com</a><br>
+        <a href="http://www.flaticon.com/free-icon/map-marker_34468" target="_blank">Map Marker Icon</a> made by <a href="http://www.flaticon.com/authors/simpleicon" target="_blank">SimpleIcon</a> from <a href="http://www.flaticon.com" target="_blank">www.flaticon.com</a><br>
+    </div>
+
+}
