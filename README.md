@@ -12,7 +12,7 @@ Localizr was a student project as part of the course "Semantic Web Technologies"
 * Run `activator -jvm-debug 9999 ~run` for debug or `activator ~run` for release configuration inside the root directory
 
 ## Known issues
-* The SPARQL queries for fetching DBPedia information about a city does not work anymore as exprected. Often the result is empty. In big cities like Berlin it still works.
+* The SPARQL queries for fetching DBPedia information about a city do not work anymore as expected. Often the result is empty. In big cities like Berlin it still works.
 * The EventMedia database we used for fetching event data is down most of the time. The authors seem not to maintain it anymore.
 
 ## Original team members
