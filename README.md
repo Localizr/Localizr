@@ -25,5 +25,5 @@ You need to have a Google maps API key and set it in `app/views/index.scala.html
 
 ## Original team members
 * Anna Primpeli
-* Maximilian Böhm
-* Martin Pfannemüller
+* [Maximilian Böhm](https://maximilian-boehm.com)
+* [Martin Pfannemüller](http://pfannemueller.de)
