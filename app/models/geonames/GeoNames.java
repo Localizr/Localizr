@@ -26,23 +26,21 @@ public class GeoNames {
 	private static final ALogger logger = play.Logger.of(GeoNames.class);
 
 	
-	public static F.Promise<POIList> getCachedPOIList(Location loc, String profile, List<String> categories) {
+	public static F.Promise<POIList> getCachedPOIList(Location loc) {
 		// Build Caching-Key
     	String sCategories = "";
-    	for(String s:categories)
-    		sCategories+=s;
-    	String sKey = "poilist-"+loc.getLat()+loc.getLng()+profile+sCategories;
+    	String sKey = "poilist-"+loc.getLat()+loc.getLng();
     	// Is the result already in the Cache?
     	@SuppressWarnings("unchecked")
     	F.Promise<POIList> poiList = (Promise<POIList>) Cache.get(sKey);
     	// No? -> Retrieve it
-		if(poiList == null) poiList = GeoNames.async(loc,profile,categories);
+		if(poiList == null) poiList = GeoNames.async(loc);
 		// Put it into the cache
 		Cache.set(sKey, poiList);
 		return poiList;
 	}
-    public static F.Promise<POIList> async(Location loc, String profile, List<String> categories) {
-    	return F.Promise.promise(() -> GeoNames.retriveData(loc,profile, categories));
+    public static F.Promise<POIList> async(Location loc) {
+    	return F.Promise.promise(() -> GeoNames.retriveData(loc));
     }
 
 	/**
@@ -52,10 +50,8 @@ public class GeoNames {
 	 * @param categories
 	 * @return
 	 */
-	public static POIList retriveData(Location location, String profile, List<String> categories){
+	public static POIList retriveData(Location location){
 
-        String filterCategories=setCategoriesFilter(profile, categories);
-				
 		String sparqlquery= "PREFIX geo-pos: <http://www.w3.org/2003/01/geo/wgs84_pos#> \n"
 				+ "PREFIX omgeo: <http://www.ontotext.com/owlim/geo#> \n"
 				+ "PREFIX dbpedia: <http://dbpedia.org/resource/> \n"
@@ -76,7 +72,6 @@ public class GeoNames {
 				+ "?poi geo-pos:lat ?lat . \n"
 				+ "?poi geo-pos:long ?lng .\n"
 				+ "FILTER(langMatches(lang(?label), 'EN'))\n"
-				+ "FILTER(langMatches(lang(?description), 'EN'))\n"				+ "FILTER ("+filterCategories+") \n"
 				+ "OPTIONAL { \n"
 				+ "?poi foaf:homepage ?page . \n"
 				+ "} \n"
@@ -111,70 +106,5 @@ public class GeoNames {
 
         return list;
     }
-
-	/**
-	 * Defines certain Freebase classes for filtering data when querying for POIs. The combination of classes depends on the selected profile
-	 * @param profile
-	 * @param categories
-	 * @return
-	 */
-	private static String setCategoriesFilter(String profile, List<String> categories) {
-		String result = "";
-		 
-		 switch (profile) {
-		 case "tourist":  result = "?type=fb:architecture.structure "+
-         "|| ?type=fb:architecture.house ||  ?type=fb:architecture.building "+
-         "|| ?type=fb:aviation.airport  "+
-         "|| ?type=fb:travel.tourist_attraction || ?type=fb:religion.monastery "+
-         "|| ?type=fb:architecture.lighthouse || ?type=fb:architecture.museum "+
-         "|| ?type=fb:business.shopping_center || ?type=fb:protected_sites.protected_site "+
-         "|| ?type=fb:travel.hotel || ?type=fb:base.hotels.topic || ?type=fb:opera.opera_house "+
-         "|| ?type=fb:medicine.hospital || ?type=fb:astronomy.astronomical_observatory "+
-         "|| ?type=fb:base.nightclubs.nightclub || ?type=fb:base.ports.topic";
-		  break;
-		 case "newcitizen":  result = "?type=fb:aviation.airport || ?type=fb:astronomy.astronomical_observatory "+
-         "|| ?type=fb:tv.tv_location "+
-         "|| ?type=fb:people.place_of_interment || ?type=fb:religion.place_of_worship  ||  ?type=fb:organization.organization "+       
-         "|| ?type=fb:library.public_library || ?type=fb:education.university || ?type=fb:location.cemetery || ?type=fb:theater.theater "+
-         "|| ?type=fb:finance.stock_exchange || ?type=fb:medicine.hospital || ?type=fb:education.department || ?type=fb:law.court "+
-         "|| ?type=fb:base.nightclubs.nightclub || ?type=fb:base.movietheatres.movie_theatre || ?type=fb:base.ports.topic ";
-
-		  break;
-		  
-		 case "family":  result = "?type=fb:education.school || ?type=fb:base.movietheatres.movie_theatre "+
-         "|| ?type=fb:zoos.zoo || ?type=fb:astronomy.astronomical_observatory "+
-         "|| ?type=fb:theater.theater ";
-		  break;
-		 
-		 case "business":  result = "?type=fb:business.business_location || ?type=fb:base.ports.topic "+
-         "|| ?type=fb:finance.stock_exchange ||  ?type=fb:business.shopping_center "+
-         "|| ?type=fb:aviation.airport ";
-
-		  break;
-		 case "sport":  result = "?type=fb:geography.mountain || ?type=fb:sports.sports_facility";
-		  break;
-         case "advanced":
-             for(String category: categories){
-                result += "?type="+category;
-                if(categories.indexOf(category) < categories.size()-1){
-                    result += "||";
-                }
-            }
-         break;
-		// Default take values like tourist
-		 default: result = "?type=fb:architecture.structure "+
-		         "|| ?type=fb:architecture.house ||  ?type=fb:architecture.building "+
-		         "|| ?type=fb:aviation.airport "+
-		         "|| ?type=fb:travel.tourist_attraction || ?type=fb:religion.monastery "+
-		         "|| ?type=fb:architecture.lighthouse || ?type=fb:architecture.museum "+
-		         "|| ?type=fb:business.shopping_center || ?type=fb:protected_sites.protected_site "+
-		         "|| ?type=fb:travel.hotel || ?type=fb:base.hotels.topic || ?type=fb:opera.opera_house "+
-		         "|| ?type=fb:medicine.hospital || ?type=fb:astronomy.astronomical_observatory "+
-		         "|| ?type=fb:base.nightclubs.nightclub || ?type=fb:base.ports.topic";
-		  break;
-		 }
-
-		return result;
-	}
 
 }

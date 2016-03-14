@@ -23,8 +23,8 @@ var MarkerIcon = L.Icon.extend({
 });
 
 var poiIcon = new MarkerIcon({iconUrl: 'assets/images/poimarker.png'}),
-    imageIcon = new MarkerIcon({iconUrl: 'assets/images/imagemarker.png'}),
-    eventIcon = new MarkerIcon({iconUrl: 'assets/images/eventmarker.png'});
+    eventIcon = new MarkerIcon({iconUrl: 'assets/images/eventmarker.png'}),
+    imageIcon = new MarkerIcon({iconUrl: 'assets/images/imagemarker.png'});
 
 function addMarker(name,lat,lon,type, element) {
     if(type == "image"){
@@ -122,16 +122,16 @@ function initMap(){
 
     var requests = [];
 
-    _.each(events, function(event, index){
-        requests.push(processGeocode(event));
-    });
-
     async.parallel(requests, function(){
         // Possible callback
     });
 
     _.each(list, function(poi) {
         addMarker(poi.label, poi.lat, poi.lon,"poi", poi);
+    });
+
+    _.each(events, function(event, index){
+        addMarker(event.title, event.latitude, event.longitude, "event", event);
     });
 
     _.each(panoramioImages, function(image) {
@@ -211,8 +211,8 @@ function initMap(){
 
     $(".scrollEventToMap").click(function() {
         var index = $(this).attr('data-index');
-        var lat = events[index].lat;
-        var lon = events[index].lon;
+        var lat = events[index].latitude;
+        var lon = events[index].longitude;
 
         map.panTo(new L.LatLng(lat, lon));
 
@@ -224,8 +224,8 @@ function initMap(){
     });
 
     map.addLayer(poiMarkers);
-    map.addLayer(imageMarkers);
     map.addLayer(eventMarkers);
+    map.addLayer(imageMarkers);
 
     var overlayMaps = {
         "POI": poiMarkers,

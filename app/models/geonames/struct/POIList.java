@@ -34,7 +34,8 @@ public class POIList {
     }
 
     public void add(POI poi){
-        listPOIs.add(poi);
+    	if(!listPOIs.contains(poi))
+    		listPOIs.add(poi);
     }
 
     public ArrayList<POI> get() {

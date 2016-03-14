@@ -46,8 +46,6 @@ public class PanoramioAPI {
 		sURL = sURL.replace("MAX_X", String.valueOf(dBounding[1][0]));
 		sURL = sURL.replace("MAX_Y", String.valueOf(dBounding[1][1]));
 		
-		logger.debug(sURL);
-		
 		// make async web-request
 		Promise<LocPhotoList> photoPromise = WS.url(sURL).get().map(response -> {
 			// result is json

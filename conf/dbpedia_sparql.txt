@@ -1,0 +1,41 @@
+PREFIX dbpedia-owl:<http://dbpedia.org/ontology/>
+PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#>
+PREFIX foaf:<http://xmlns.com/foaf/0.1/>
+PREFIX xsd:<http://www.w3.org/2001/XMLSchema#>
+select 
+(AVG(?area1) AS ?Area1) 
+(AVG(?areaMetro2) AS ?AreaMetro2) 
+(AVG(?area3) AS ?Area3) 
+(AVG(?population1) AS ?Population1)
+(AVG(?population2) AS ?Population2)
+(SAMPLE(?picture) AS ?Picture)
+(group_concat(distinct ?description; separator = ',') AS ?Description )
+(group_concat(distinct ?country; separator = ',,') AS ?Country )
+(group_concat(distinct ?lcountry; separator = ',') AS ?Lcountry )
+(group_concat(distinct ?popasof; separator = ',') AS ?Popasof )
+(group_concat(distinct ?motto; separator = ',') AS ?Motto )
+(group_concat(distinct ?homepage; separator = ',') AS ?Homepage )
+(group_concat(distinct ?leader1; separator = ',,') AS ?Leader1 )
+(group_concat(distinct ?leader2; separator = ',,') AS ?Leader2 )
+(group_concat(distinct ?lleader1; separator = ',') AS ?LLeader1 ) 
+(group_concat(distinct ?lleader2; separator = ',') AS ?LLeader2 )
+where {
+?city a dbpedia-owl:Place.
+?city rdfs:label 'SIMPLE_NAME'@en.
+OPTIONAL{?city rdfs:comment ?description. FILTER(langMatches(lang(?description), 'EN'))}
+OPTIONAL{ ?city dbpedia-owl:country ?country.
+?country rdfs:label ?lcountry. FILTER(langMatches(lang(?lcountry), 'EN'))}
+OPTIONAL{?city foaf:depiction ?picture}
+OPTIONAL{?city foaf:homepage ?homepage}
+OPTIONAL{?city dbpedia-owl:areaTotal ?area1  }
+OPTIONAL{?city dbpedia-owl:areaMetro ?areaMetro2  }
+OPTIONAL{?city dbpedia-owl:area ?area3  }
+OPTIONAL{?city dbpedia-owl:leaderName ?leader1. ?leader1 rdfs:label ?lleader1 FILTER(langMatches(lang(?lleader1), 'EN'))}
+OPTIONAL{?city dbpedia-owl:leader ?leader2. ?leader2 rdfs:label ?lleader2 FILTER(langMatches(lang(?lleader2), 'EN')) }
+OPTIONAL{?city dbpedia-owl:populationTotal ?population1. }
+OPTIONAL{?city dbpedia-owl:populationMetro ?population2.}
+OPTIONAL{?city dbpedia-owl:populationAsOf ?popasof.}
+OPTIONAL{?city dbpedia-owl:motto ?motto}
+				
+}

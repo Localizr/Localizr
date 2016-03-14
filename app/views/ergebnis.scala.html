@@ -1,7 +1,7 @@
 @(
 	loc: models.geo.Location,
 	poiList: models.geonames.struct.POIList,
-	eventList: models.eventmedia.EventList,
+    eventList: models.eventful.EventList,
 	infoDBPedia: models.dbpedia.DBPediaInfoObject,
 	panoramioPhotos: models.images.struct.LocPhotoList,
     error: Boolean
@@ -23,8 +23,8 @@
         var mapViewLng = @loc.getLng();
         var cityName = "@loc.getSimpleName()";
     	var list = @{Html(new Gson().toJson(poiList.get))};
+        var events = @{Html(new Gson().toJson(eventList.get))};
     	var panoramioImages = @{Html(new Gson().toJson(panoramioPhotos.getPhotos))};
-    	var events = @{Html(new Gson().toJson(eventList.get))};
         </script>
     <script src="@routes.Assets.at("bower_components/bootstrap/js/tab.js")"></script>
     <script src="@routes.Assets.at("bower_components/Justified-Gallery/dist/js/jquery.justifiedGallery.min.js")"></script>
@@ -48,18 +48,20 @@
                 <div class="alert alert-danger" role="alert">Some information could not be retrieved</div>
             }
 			<h1>@loc.getName()</h1>
-			<a href="@routes.Application.index()"><img src="@routes.Assets.at("images/start_over_icon.png")" style="width: 50px;"> Start over</a>
+			<a href="https://localizr.info"><img src="@routes.Assets.at("images/start_over_icon.png")" style="width: 50px;"> Start over</a>
 		   	<ul id="myTab" class="nav nav-tabs" role="tablist">
 		   		<li class="active"><a data-map="65%" data-container="35%" href="#general-info">General Info</a></li>
 		   		<li><a data-map="65%" data-container="35%" href="#poi">Points of Interest</a></li>
-		   		<li><a data-map="30%" data-container="70%" href="#events">Events</a></li>
+                <li><a data-map="30%" data-container="70%" href="#events">Events</a></li>
 		   		<li><a data-map="30%" data-container="70%" href="#photos">Photos</a></li>
 		   	</ul>
 		    <div class="tab-content">
 			    <div class="tab-pane active" id="general-info">
 			    
 			        @if(infoDBPedia!=null) {
-					<img src="@infoDBPedia.getLiteralProperties.get("picture")?width=600" alt="" style="background-color: white; width: 100%;">
+				        @if(infoDBPedia.getLiteralProperties.get("picture")!=null) {
+				        	<img src="@infoDBPedia.getLiteralProperties.get("picture")?width=600" alt="" style="background-color: white; width: 100%;">
+						}
 					<table class="table table-condensed table-general-info">
 						@for(key <- infoDBPedia.getLiteralProperties.keySet()){
 							@if(key=="Country" || key=="Leader"){
@@ -105,37 +107,33 @@
 			        }
 			        </ul>
 			     </div>
-			     
-			     <div class="tab-pane" id="events">
-			        
-			        <table class="table table-condensed">
-					  <tr>
-					    <th>Event</th>
-					    <th>Category</th> 
-					    <th>Where?</th>
-					    <th>Artist</th>
-					    <th>When?</th>
-					    <th></th>
-					  </tr>	
-					@if(eventList!=null) {
-						@for((e, index) <- eventList.get.zipWithIndex) {
-			        	<tr>
-			            <td>@e.getShortTitle()</td>
-					    <td>@e.getCategory()</td> 
-				    	<td><a href="#" title="Show event on map" class="scrollEventToMap" data-index="@index"><span class="icon"></span><span class="address">@e.getAddress()</span></a></td>
-					    <td>@e.getShortArtist()</td>
-					    <td>@Html(e.getFormattedDate())</td>
-					    <td>
-	    					@if(e.getFirstImage()) {
-		    					<img alt="@e.getShortTitle()" src="@e.getFirstImage()">
-	    					}
-				    	</td>
-					    </tr>
-			        }	
-					} 
-			        
-					</table>        
-			     </div>
+
+                <div class="tab-pane" id="events">
+
+                    <table class="table table-condensed">
+                        <tr>
+                            <th>Event</th>
+                            <th>Where?</th>
+                            <th>When?</th>
+                            <th></th>
+                        </tr>
+                        @if(eventList!=null) {
+                            @for((e, index) <- eventList.get.zipWithIndex) {
+                                <tr>
+                                    <td>@e.getTitle()</td>
+                                    <td><a href="#" title="Show event on map" class="scrollEventToMap" data-index="@index"><span class="icon"></span><span class="address">@if(e.getVenue_address() != "null"){@e.getVenue_address()}</span></a></td>
+                                    <td>@e.getStartTime().format("dd MMMM yyyy")</td>
+                                    <td>
+                                        @if(e.getImage_url()) {
+                                            <img src="@e.getImage_url()">
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+
+                    </table>
+                </div>
 			     
 			     <div class="tab-pane" id="photos">
 			

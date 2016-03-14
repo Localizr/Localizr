@@ -12,7 +12,6 @@ public class Location {
 	private String SimpleName;
 	private double lng;
 	private double lat;
-    private String address;
 	private List<Location> listAlternatives = new ArrayList<Location>();
 	
 	/**
@@ -65,11 +64,4 @@ public class Location {
 		this.lat = lat;
 	}
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
 }

@@ -1,10 +1,16 @@
 package models.dbpedia;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import models.eventmedia.EventMedia;
 import models.geo.Location;
+import play.Play;
 import play.cache.Cache;
 import play.libs.F;
 import play.libs.F.Promise;
@@ -27,7 +33,8 @@ public class DBPedia extends Controller {
     	// Is the result already in the Cache?
 		F.Promise<DBPediaInfoObject> infoDBPedia = (Promise<DBPediaInfoObject>) Cache.get(sKey);
     	// No? -> Retrieve it
-		if(infoDBPedia == null) infoDBPedia = search4GeneralInfo(loc);
+		if(infoDBPedia == null)
+			infoDBPedia = search4GeneralInfo(loc);
 		// Put it into the cache
 		Cache.set(sKey, infoDBPedia);
 		return infoDBPedia;
@@ -43,58 +50,27 @@ public class DBPedia extends Controller {
 	 * @return
 	 */
 	public static DBPediaInfoObject poseInfoQuery(Location location) { 
-		String sparqlquery= "PREFIX dbpedia-owl:<http://dbpedia.org/ontology/> \n"
-				+ "PREFIX geo:<http://www.w3.org/2003/01/geo/wgs84_pos#> \n"
-				+ "PREFIX rdfs:<http://www.w3.org/2000/01/rdf-schema#> \n"
-				+ "PREFIX foaf:<http://xmlns.com/foaf/0.1/> \n"
-				+ "PREFIX xsd:<http://www.w3.org/2001/XMLSchema#> \n"
-				+ "select  "
-				+ "(AVG(?area1) AS ?Area1) "
-				+ "(AVG(?areaMetro2) AS ?AreaMetro2) "
-				+ "(AVG(?area3) AS ?Area3) "
-				+ "(AVG(?population1) AS ?Population1)"
-				+ "(AVG(?population2) AS ?Population2)"
-				+ "(SAMPLE(?picture) AS ?Picture)"
-				+ "(group_concat(distinct ?description; separator = ',') AS ?Description )"
-				+ "(group_concat(distinct ?country; separator = ',,') AS ?Country )"
-				+ "(group_concat(distinct ?lcountry; separator = ',') AS ?Lcountry )"
-				+ "(group_concat(distinct ?popasof; separator = ',') AS ?Popasof )"
-				+ "(group_concat(distinct ?motto; separator = ',') AS ?Motto )"
-				+ "(group_concat(distinct ?homepage; separator = ',') AS ?Homepage )"
-				+ "(group_concat(distinct ?leader1; separator = ',,') AS ?Leader1 )"
-				+ "(group_concat(distinct ?leader2; separator = ',,') AS ?Leader2 )"
-				+ "(group_concat(distinct ?lleader1; separator = ',') AS ?LLeader1 ) "
-				+ "(group_concat(distinct ?lleader2; separator = ',') AS ?LLeader2 )"
-				+ "(group_concat(distinct ?lleader3; separator = ',') AS ?LLeader3 )"
-				+ "where { \n"
-				+ "?city a dbpedia-owl:Place. \n"
-				+ "?city rdfs:label '"+location.getSimpleName()+"'@en. \n"
-				+ "?city rdfs:comment ?description.\n"
-				+ "FILTER(langMatches(lang(?description), 'EN'))\n"
-				+ "OPTIONAL{ ?city dbpedia-owl:country ?country.\n"
-				+ "?country rdfs:label ?lcountry. FILTER(langMatches(lang(?lcountry), 'EN'))} \n"
-				+ "OPTIONAL{?city foaf:depiction ?picture} \n"
-				+ "OPTIONAL{?city foaf:homepage ?homepage} \n"
-				+ "OPTIONAL{?city dbpedia-owl:areaTotal ?area1  } \n"
-				+ "OPTIONAL{?city dbpedia-owl:areaMetro ?areaMetro2  } \n"
-				+ "OPTIONAL{?city dbpedia-owl:area ?area3  } \n"
-				+ "OPTIONAL{?city dbpedia-owl:leaderName ?leader1. ?leader1 rdfs:label ?lleader1 FILTER(langMatches(lang(?lleader1), 'EN'))} \n"
-				+ "OPTIONAL{?city dbpedia-owl:leader ?leader2. ?leader2 rdfs:label ?lleader2 FILTER(langMatches(lang(?lleader2), 'EN')) } \n"
-				+ "OPTIONAL{?city dbpedia-owl:populationTotal ?population1. } \n"
-				+ "OPTIONAL{?city dbpedia-owl:populationMetro ?population2.} \n"
-				+ "OPTIONAL{?city dbpedia-owl:populationAsOf ?popasof.} \n"
-				+ "OPTIONAL{?city dbpedia-owl:motto ?motto} \n"
-				
-				+ "}";
-				
-		Query query = QueryFactory.create(sparqlquery);
-	    QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query);
-	    ResultSet results = qexec.execSelect();
-	    // Put result into a DBPediaInfoObject
-        DBPediaInfoObject info = parseResult(results);
-	    qexec.close();
+		String sQuery = "";
+		try {
+	        java.net.URL url = Play.class.getResource("/dbpedia_sparql.txt");
+	        java.nio.file.Path resPath = java.nio.file.Paths.get(url.toURI());
+	        sQuery= new String(java.nio.file.Files.readAllBytes(resPath), "UTF8");
 
-	    return info;
+            sQuery = sQuery.replace("SIMPLE_NAME", location.getSimpleName());
+
+            Query query = QueryFactory.create(sQuery);
+            QueryExecution qexec = QueryExecutionFactory.sparqlService("http://dbpedia.org/sparql", query);
+            ResultSet results = qexec.execSelect();
+            // Put result into a DBPediaInfoObject
+            DBPediaInfoObject info = parseResult(results);
+            qexec.close();
+
+            return info;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+        return null;
 	}	
 
 	/**

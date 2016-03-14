@@ -10,6 +10,20 @@ public class POI {
     private String wikilink;
     private double lat;
     private double lon;
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if(obj instanceof POI){
+    		POI poi2 = (POI)obj;
+    		
+    		if(poi2.getLabel().equals(getLabel()))
+    			return true;
+    		else
+    			return false;
+    		
+    	}
+    	return super.equals(obj);
+    }
 
     public POI(String resource, String label, String wikilink, double lat, double lon){
         this.resource = resource;
@@ -60,6 +74,9 @@ public class POI {
 	}
 
 	public void setWikilink(String wikilink) {
+		String sOD = "oldid=";
+		if(wikilink.contains(sOD))
+				wikilink = wikilink.substring(0, wikilink.indexOf(sOD)-1);
 		this.wikilink = wikilink;
 	}
 }

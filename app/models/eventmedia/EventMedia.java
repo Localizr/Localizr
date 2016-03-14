@@ -12,21 +12,21 @@ import models.geo.Location;
 
 public class EventMedia extends Controller {
 	
-	public static F.Promise<EventList> getCachedEvents(Location loc,String profile) {
+	public static F.Promise<EventList> getCachedEvents(Location loc) {
 		// Build Caching-Key
-    	String sKey = "events-"+loc.getLat()+loc.getLng()+profile;
+    	String sKey = "events-"+loc.getLat()+loc.getLng();
     	@SuppressWarnings("unchecked")
     	// Is the result already in the Cache?
     	F.Promise<EventList> eventList = (Promise<EventList>) Cache.get(sKey);
     	// No? -> Retrieve it
-		if(eventList == null) eventList = EventMedia.search4Events(loc,profile);
+		if(eventList == null) eventList = EventMedia.search4Events(loc);
 		// Put it into the cache
 		Cache.set(sKey, eventList);
 		return eventList;
 	}
 	
-	public static F.Promise<EventList> search4Events(Location loc,String profile) {
-		return F.Promise.promise(() -> EventMedia.poseEventQuery(loc, profile));
+	public static F.Promise<EventList> search4Events(Location loc) {
+		return F.Promise.promise(() -> EventMedia.poseEventQuery(loc));
 //		final EventList events=EventMedia.poseEventQuery(loc,profile);
 //		if (events==null) 	return null;
 //		else 				return F.Promise.promise(() -> events);
@@ -38,11 +38,8 @@ public class EventMedia extends Controller {
 	 * @param profile
 	 * @return
 	 */
-	public static EventList poseEventQuery(Location location,String profile) {
+	public static EventList poseEventQuery(Location location) {
 		
-		//String profile="family";// to be implemented in the interface
-		String filterCategories=setCategoriesFilter(profile);
-				
 		String sparqlquery= "PREFIX lode:<http://linkedevents.org/ontology/> \n"
 				+ "PREFIX dc:<http://purl.org/dc/elements/1.1/> \n"
 				+ "PREFIX vcard:<http://www.w3.org/2006/vcard/ns#> \n"
@@ -70,7 +67,6 @@ public class EventMedia extends Controller {
 				+ "?time time:inXSDDateTime ?datetime. \n"
 				+ "?event lode:involvedAgent ?agent.\n"
 				+ "?agent rdfs:label ?nameAgent. \n"
-				+ "FILTER ( "+filterCategories+" ) \n"
 				+ "OPTIONAL { \n"
 				+ "?agent foaf:depiction ?img. \n"
 				+ "} \n"
@@ -88,33 +84,6 @@ public class EventMedia extends Controller {
 	    
 	}
 	
-	/**
-	 * Defines the different lode:hasCategory  values for the EventMedia query based on the selected profile
-	 * @param profile
-	 * @return
-	 */
-	private static String setCategoriesFilter(String profile) {
-		
-		 String categories;
-		 
-		 switch (profile) {
-		 case "tourist":  categories = "?category='Musical Concert' || ?category='Visual and Performing Arts' || ?category='Festivals' || ?category='Other and Miscellaneous' || ?category='Comedy' || ?category='Performing Arts' || ?category='Media and Literary' || ?category='Technology' || ?category='Nightlife' || ?category='Museums and Attractions' || ?category='Food'";
-		  break;
-		 case "newcitizen":  categories = "?category='Musical Concert' || ?category='Social Gathering' || ?category='Visual and Performing Arts' || ?category='Festivals' || ?category='Community' || ?category='Other and Miscellaneous' || ?category='Media and Literary' || ?category='Comedy' || ?category='Performing Arts' || ?category='Nightlife' || ?category='Fundraising and Charity' || ?category='Food'";
-		  break;
-		 case "family":  categories = "?category='Family and Kids' || ?category='Education' || ?category='Animals' ";
-		  break;
-		 case "business":  categories = "?category='Commercial and Sales' || ?category='Politics' || ?category='Technology' || ?category='Professional' || ?category='Conferences and Tradeshows' || ?category='Organizations and Meetups'|| ?category='Business and Networking' || ?category='Science'";
-		  break;
-		 case "sport":  categories = "?category='Sports' || ?category='Outdoors Recreation' || ?category='Health and Wellness'";
-		  break;
-		// Default take values like tourist
-		 default: categories = "?category='Musical Concert' || ?category='Visual and Performing Arts' || ?category='Festivals' || ?category='Other and Miscellaneous' || ?category='Comedy' || ?category='Performing Arts' || ?category='Media and Literary' || ?category='Technology' || ?category='Nightlife' || ?category='Museums and Attractions' || ?category='Food'"; 
-		  break;
-		 }
-		return categories;
-	}
-
 	/**
 	 * Parses the result of the query and stores the relevant information in a list of Event objects
 	 * @param result

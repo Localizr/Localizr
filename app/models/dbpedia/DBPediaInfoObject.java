@@ -45,12 +45,7 @@ public class DBPediaInfoObject {
 		else if (initialProp.containsKey("Area3"))
 			finalProp.put("Total Area Size", initialProp.get("Area3"));
 		if (initialProp.containsKey("Population1")){
-			if (initialProp.containsKey("Population2")){
-				finalProp.put("Population",
-						String.valueOf(Double.parseDouble(initialProp.get("Population1"))+Double.parseDouble(initialProp.get("Population2"))/2));
-			}
-			else 
-				finalProp.put("Population",initialProp.get("Population1"));
+			finalProp.put("Population",initialProp.get("Population1"));
 		}
 		else if (initialProp.containsKey("Population2"))
 			finalProp.put("Population",initialProp.get("Population2"));

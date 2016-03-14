@@ -1,22 +1,23 @@
-package models.eventmedia;
+package models.eventful;
+
+import com.google.gson.Gson;
+import models.eventful.Event;
+import models.geo.Location;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.google.gson.Gson;
-import models.geo.Location;
-
 public class EventList {
 
-	private ArrayList<Event> eventlist;
+	private ArrayList<models.eventful.Event> eventlist;
 
     public EventList(){
-    	eventlist = new ArrayList<Event>();
+    	eventlist = new ArrayList<models.eventful.Event>();
     }
 
     public String toString(){
         String string = "";
-        for(Event e: eventlist){
+        for(models.eventful.Event e: eventlist){
             string = string + "EVENTS: " + e.getTitle() + "\n";
         }
         return string;
@@ -32,18 +33,18 @@ public class EventList {
         return eventlist.size();
     }
 
-    public void add(Event e){
+    public void add(models.eventful.Event e){
         eventlist.add(e);
     }
 
-    public ArrayList<Event> get() {
+    public ArrayList<models.eventful.Event> get() {
         return eventlist;
     }
 
     public ArrayList<String> getAllAddresses(){
         ArrayList<String> addresses = new ArrayList<String>();
-        for(Event e: eventlist){
-            addresses.add(e.getAddress());
+        for(models.eventful.Event e: eventlist){
+            addresses.add(e.getVenue_address());
         }
 
         return addresses;
@@ -51,8 +52,8 @@ public class EventList {
 
     public HashMap<String,String> getAddressHashmap(){
         HashMap<String,String> events = new HashMap<String,String>();
-        for(Event e: eventlist){
-            events.put(e.getTitle(),e.getAddress());
+        for(models.eventful.Event e: eventlist){
+            events.put(e.getTitle(),e.getVenue_address());
         }
 
         return events;
@@ -63,6 +64,9 @@ public class EventList {
         for(Event e: eventlist){
             Location l = new Location();
             l.setName(e.getTitle());
+            l.setSimpleName(e.getVenue_address());
+            l.setLat(e.getLatitude());
+            l.setLng(e.getLongitude());
             events.add(l);
         }
 

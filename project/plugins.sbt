@@ -1,7 +1,9 @@
 resolvers += "Typesafe repository" at "http://repo.typesafe.com/typesafe/releases/"
+ivyScala := ivyScala.value map { _.copy(overrideScalaVersion = true) }
 
 // The Play plugin
-addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.4")
+addSbtPlugin("com.typesafe.play" % "sbt-plugin" % "2.4.6")
+addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
 
 // web plugins
 
@@ -19,3 +21,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-mocha" % "1.0.0")
 
 // Migration to Play 2.4
 addSbtPlugin("com.typesafe.sbt" % "sbt-play-ebean" % "1.0.0")
+
+// For WAR file creation
+addSbtPlugin("com.github.play2war" % "play2-war-plugin" % "1.4-beta1")
