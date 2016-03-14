@@ -3,6 +3,8 @@ Localizr
 
 Localizr was a student project as part of the course "Semantic Web Technologies" at the University of Mannheim in 2014. We wanted to share our code with the world. You can find a running version of it [here](https://localizr.info).
 
+For more detailed information see the [report](report.pdf) that had to be created for this project.
+
 ##Dependencies
 * [Play Framework Version 2.4](https://playframework.com)
 * [Bower](http://bower.io/)
