@@ -11,7 +11,6 @@ $(document).ready(function() {
     
 
     $("#gobutton").click(function() {
-        fillInAddress();
     	return false;
     });
     $("#gogps").click(function() {
@@ -42,6 +41,7 @@ function initAutocomplete() {
     autocomplete = new google.maps.places.Autocomplete(($('#autocomplete')[0]),{types: ['(cities)']});
     autocomplete.addListener('place_changed', function(){
         $("#gobutton").prop("disabled", false);
+        fillInAddress();
     });
 }
 
