@@ -1,9 +1,11 @@
 Localizr
 ========
 
-Localizr was a student project as part of the course "Semantic Web Technologies" at the University of Mannheim in 2014. We wanted to share our code with the world. You can find the latest running version of it [here](https://localizr.info).
+Localizr was a student project as part of the course "Semantic Web Technologies" at the University of Mannheim in 2014. We wanted to share our code with the world.
 
 For more detailed information see the [report](report.pdf) that had to be created for this project.
+
+In the current version the points of interest and the photos do not work anymore. The reason for this are probably changes in APIs.
 
 ##Dependencies
 * [Play Framework Version 2.4](https://playframework.com)
@@ -26,4 +28,4 @@ You need to have a Google maps API key and set it in `app/views/index.scala.html
 ## Original team members
 * Anna Primpeli
 * [Maximilian Böhm](https://maximilian-boehm.com)
-* [Martin Pfannemüller](http://pfannemueller.de)
+* [Martin Pfannemüller](https://pfannemueller.de)
