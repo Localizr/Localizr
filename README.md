@@ -7,14 +7,14 @@ For more detailed information see the [report](report.pdf) that had to be create
 
 In the current version the points of interest and the photos do not work anymore. The reason for this are probably changes in APIs.
 
-##Dependencies
+## Dependencies
 * [Play Framework Version 2.4](https://playframework.com)
 * [Bower](http://bower.io/)
 
-##Setup API Keys
+## Setup API Keys
 You need to have a Google maps API key and set it in `app/views/index.scala.html`. For the EventAPI you need an Eventful API key and set it up inside `app/models/eventful/EventfulAPI.java`
 
-##Build instructions
+## Build instructions
 * Run `bower install` in the public directory
 * Run `activator -jvm-debug 9999 ~run` for debug or `activator ~run` for release configuration inside the root directory
 
